@@ -8,15 +8,27 @@
 }
 
 html {
-  font-size: 63.5%;
+  font-size: 120%;
 }
+
+a { color: inherit; }
 
 body {
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  /*display: flex;*/
+  /*flex-direction: column;*/
+  /*justify-content: center;*/
+  /*align-items: center;*/
+  /*horiz-align: center;*/
+  text-align: center;
+  /*vertical-align: top;*/
+  /*display: inline-block;*/
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 button {
@@ -24,3 +36,12 @@ button {
   padding: 0.6rem 1.2rem;
   margin-top: 1rem;
 }
+h3 {
+  display: inline-block;
+  margin: 0;
+}
+
+.buttonHolder{
+  text-align: center;
+}
+

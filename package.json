@@ -4,12 +4,15 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "(npx parcel ./index.html) & npx parcel watch ./index.html "
+    "start": "npx parcel ./index.html -p 8000"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "parcel": "^2.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
   }
 }

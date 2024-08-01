@@ -7,8 +7,30 @@
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
-    <h1>Hello, TypeScript</h1>
-    <button class="clickMe">Click Me</button>
-    <script src="./src/index.ts"></script>
+    <script src="./src/index.ts" type="module"></script>
+    <br>
+<!--    <button class="playAudio">Play</button>-->
+    <br><br>
+    <img id="thumbnail"  height="250px" class="center"><br>
+    <h3 id="germanWord"></h3>
+    <br><br>
+    <h3 id="germanPhrase" style="height: 65px;"></h3>
+    <div>
+      <button class="success">✓</button>
+      <button class="failure">x</button>
+    </div>
+    <br>
+    <h3 id="englishPhrase" style="height: 65px;"></h3>
+    <br>
+    <h3 id="englishWord"></h3>
+    <br>
+    <br>
+    <br>
+    <div class="buttonHolder">
+      <input type="text" id="userEnglishWord" style="height: 45px;"/>
+      <button class="recordEnglishWord" style="height: 45px;">Record</button>
+    </div>
+    <br>
+    <button class="learned">Learned!</button>
   </body>
 </html>
