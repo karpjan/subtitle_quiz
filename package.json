@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "parcel": "^2.9.3"
+    "parcel": "^2.9.3",
+    "big.js": "6.2.1"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "@types/big.js": "6.1.6"
   }
 }
