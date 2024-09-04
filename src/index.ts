@@ -16,7 +16,9 @@ import dataJson6 from "./subtitle_data/netflix_version1_index500-599.json"
 import dataJson7 from "./subtitle_data/netflix_version1_index600-699.json"
 import dataJson8 from "./subtitle_data/netflix_version1_index700-799.json"
 import dataJson9 from "./subtitle_data/netflix_version1_index800-899.json"
-import dataJson10 from "./subtitle_data/netflix_version1_index900-906.json"
+import dataJson10 from "./subtitle_data/netflix_version1_index900-999.json"
+import dataJson11 from "./subtitle_data/netflix_version1_index1000-1099.json"
+import dataJson12 from "./subtitle_data/netflix_version1_index1100-1162.json"
 import {MAX_HISTORY} from "./const";
 
 const dataJson = dataJson1
@@ -29,6 +31,8 @@ const dataJson = dataJson1
     .concat(dataJson8)
     .concat(dataJson9)
     .concat(dataJson10)
+    .concat(dataJson11)
+    .concat(dataJson12)
 const probabilityArray: number[] = [];
 [...Array(dataJson.length).keys()].forEach(i => {
   const history = getHistory(i)
@@ -185,13 +189,15 @@ function refresh() {
   (document.getElementById('englishPhrase') as HTMLImageElement).innerHTML = '';
   (document.getElementById('englishWord') as HTMLImageElement).innerHTML = '';
   (document.getElementById('thumbnail') as HTMLImageElement).src = subtitle.thumbnail.dataURL;
+  const imgEl = (document.getElementById('thumbnail') as HTMLImageElement).parentElement!.innerHTML;
+  (document.getElementById('thumbnail') as HTMLImageElement).parentElement!.innerHTML = `<a href='https://www.multitran.com/m.exe?ll1=3&ll2=2&s=${subtitle.learningWord}&l2=2' target="_blank">${imgEl}</a>`;
+  // (document.getElementById('thumbnail') as HTMLImageElement).title = subtitle.nativePhrase;
   // (document.getElementById('germanWord') as HTMLImageElement).innerHTML = subtitle.learningWord;
   (document.getElementById('germanWord') as HTMLImageElement).innerHTML = `<a href='https://translate.google.com/?sl=de&tl=en&text=${subtitle.learningWord}&op=translate' target="_blank">${subtitle.learningWord}</a>`;
   (document.getElementById('germanPhrase') as HTMLImageElement).innerHTML = subtitle.learningPhrase;
   (document.getElementById('germanPhrase') as HTMLImageElement).onclick = function() {
     play(subtitle);
   };
-  (document.getElementById('thumbnail') as HTMLImageElement).title = subtitle.nativePhrase;
   learnedFraction.value = 0;
   // console.log(subtitle.learningPhrase)
   play(subtitle)
@@ -250,6 +256,7 @@ failure.addEventListener("click", () => {
     refresh()
   } else {
     displayCue()
+    learnedFraction.value = 100;
   }
 });
 
