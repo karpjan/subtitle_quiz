@@ -7,7 +7,7 @@ const DECAY_FACTOR = 0.3
 // const DECAY_FACTOR = 0.1
 const maxFactor = (Math.pow(DECAY_FACTOR, MAX_HISTORY) - 1)/(DECAY_FACTOR - 1)
 // const FREQUENCY_UNLEARNED_TO_LEARNED = 25
-const FREQUENCY_UNLEARNED_TO_LEARNED = 200
+export const FREQUENCY_UNLEARNED_TO_LEARNED = 200
 const INCLUDE_LEARNED_WORDS = false
 const HISTORY_WEIGHT_ENCODING = 'abcdefghijklmnopqrstuvwx-ABCDEFGHIJKLMNOPQRSTUVWX'
 const HISTORY_WEIGHT_VALUES = new Map()
@@ -41,10 +41,12 @@ export function historyValueToEncoding(value: number) {
 }
 
 export function learnedFactor(result) {
+    // assume you don't know the newly-added word
+    const resultToUse = result.length == 0 ? '0' : result;
     let total = 0;
     let factor = 1;
     [...Array(MAX_HISTORY).keys()].forEach(i => {
-        const r = resultAt(result, -(i+1))
+        const r = resultAt(resultToUse, -(i+1))
         let value: number
         if (r === undefined) {
             value = 0

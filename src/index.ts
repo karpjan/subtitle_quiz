@@ -1,4 +1,11 @@
-import {factorToProbability, historyValueToEncoding, learnedFactor, weightedRandom, weightedRandomRange} from "./math";
+import {
+  factorToProbability,
+  FREQUENCY_UNLEARNED_TO_LEARNED,
+  historyValueToEncoding,
+  learnedFactor,
+  weightedRandom,
+  weightedRandomRange
+} from "./math";
 
 // const playAudio = document.querySelector(".playAudio") as HTMLButtonElement;
 const success = document.querySelector(".success") as HTMLButtonElement;
@@ -18,8 +25,16 @@ import dataJson8 from "./subtitle_data/netflix_version1_index700-799.json"
 import dataJson9 from "./subtitle_data/netflix_version1_index800-899.json"
 import dataJson10 from "./subtitle_data/netflix_version1_index900-999.json"
 import dataJson11 from "./subtitle_data/netflix_version1_index1000-1099.json"
-import dataJson12 from "./subtitle_data/netflix_version1_index1100-1162.json"
+import dataJson12 from "./subtitle_data/netflix_version1_index1100-1199.json"
+import dataJson13 from "./subtitle_data/netflix_version1_index1200-1299.json"
+import dataJson14 from "./subtitle_data/netflix_version1_index1300-1399.json"
+import dataJson15 from "./subtitle_data/netflix_version1_index1400-1499.json"
+import dataJson16 from "./subtitle_data/netflix_version1_index1500-1599.json"
+import dataJson17 from "./subtitle_data/netflix_version1_index1600-1699.json"
+import dataJson18 from "./subtitle_data/netflix_version1_index1700-1799.json"
+import dataJson19 from "./subtitle_data/netflix_version1_index1800-1800.json"
 import {MAX_HISTORY} from "./const";
+
 
 const dataJson = dataJson1
     .concat(dataJson2)
@@ -33,6 +48,13 @@ const dataJson = dataJson1
     .concat(dataJson10)
     .concat(dataJson11)
     .concat(dataJson12)
+    .concat(dataJson13)
+    .concat(dataJson14)
+    .concat(dataJson15)
+    .concat(dataJson16)
+    .concat(dataJson17)
+    .concat(dataJson18)
+    .concat(dataJson19)
 const probabilityArray: number[] = [];
 [...Array(dataJson.length).keys()].forEach(i => {
   const history = getHistory(i)
@@ -40,11 +62,12 @@ const probabilityArray: number[] = [];
 })
 console.log(probabilityArray)
 // const temp = {}
-// for (let i = 0; i < localStorage.length; i++){
-//   console.log(localStorage.key(i))
-//   console.log(localStorage.getItem(localStorage.key(i)))
-//   temp[localStorage.key(i)] = localStorage.getItem(localStorage.key(i))
-// }
+for (let i = 0; i < localStorage.length; i++){
+  console.log(localStorage.key(i))
+  console.log(dataJson[i]?.learningWord)
+  console.log(localStorage.getItem(localStorage.key(i)))
+  // temp[localStorage.key(i)] = localStorage.getItem(localStorage.key(i))
+}
 // console.log(JSON.stringify(temp))
 
 // console.log(getHistory())
@@ -68,7 +91,7 @@ const DO_NOT_REPEAT_FOR_IS = 50
 let isFailed = false
 
 let lastTime = +new Date()
-function timed(decription: string) {
+function noteTime(decription: string) {
   const newTime = +new Date()
   console.log(`${decription} took ${(newTime - lastTime) / 1000} seconds`)
   lastTime = newTime
@@ -76,6 +99,8 @@ function timed(decription: string) {
 
 function play(subtitle) {
   if (audio !== undefined) audio.pause()
+  // sometimes the audio is missing, handle this case here
+  if (!subtitle.audioData?.dataURL) return
   audio = new Audio(subtitle.audioData.dataURL)
   audio.play().then()
 }
@@ -148,6 +173,11 @@ function isValidI(i: number) {
 
 }
 
+function getUnlearnedWordsCount() {
+  const sum = probabilityArray.reduce((partialSum, a) => partialSum + a, 0)
+  return Math.round(sum / FREQUENCY_UNLEARNED_TO_LEARNED * 100) / 100
+}
+
 function nextCard() {
   console.log(`New history: ${getHistory()}`)
   isFailed = false
@@ -168,7 +198,7 @@ function currentSubtitle() {
   // console.log(dataJson);
   // console.log(currentI);
   const i = currentI
-  // timed('currentI')
+  // noteTime('currentI')
   return dataJson[i];
 }
 
@@ -193,12 +223,15 @@ function refresh() {
   (document.getElementById('thumbnail') as HTMLImageElement).parentElement!.innerHTML = `<a href='https://www.multitran.com/m.exe?ll1=3&ll2=2&s=${subtitle.learningWord}&l2=2' target="_blank">${imgEl}</a>`;
   // (document.getElementById('thumbnail') as HTMLImageElement).title = subtitle.nativePhrase;
   // (document.getElementById('germanWord') as HTMLImageElement).innerHTML = subtitle.learningWord;
-  (document.getElementById('germanWord') as HTMLImageElement).innerHTML = `<a href='https://translate.google.com/?sl=de&tl=en&text=${subtitle.learningWord}&op=translate' target="_blank">${subtitle.learningWord}</a>`;
+  (document.getElementById('germanWord') as HTMLImageElement).innerHTML =
+      `<a href='https://translate.google.com/?sl=de&tl=en&text=${subtitle.learningWord}&op=translate' target="_blank">${subtitle.learningWord}</a>` +
+      (getHistory() ? '' : '<sup>*</sup>');
   (document.getElementById('germanPhrase') as HTMLImageElement).innerHTML = subtitle.learningPhrase;
   (document.getElementById('germanPhrase') as HTMLImageElement).onclick = function() {
     play(subtitle);
   };
   learnedFraction.value = 0;
+  (document.getElementById('unlearnedWordsCount') as HTMLImageElement).innerHTML = getUnlearnedWordsCount().toString();
   // console.log(subtitle.learningPhrase)
   play(subtitle)
   // const audio = new Audio(subtitle.audioData.dataURL)
@@ -238,15 +271,15 @@ success.addEventListener("click", () => {
 });
 
 function displayCue() {
-  // timed('user unfailed choice')
+  // noteTime('user unfailed choice')
   isFailed = true
   const subtitle = currentSubtitle();
-  // timed('getting subtitile');
+  // noteTime('getting subtitile');
   (document.getElementById('englishPhrase') as HTMLImageElement).innerHTML = subtitle.nativePhrase;
   const englishWord = getEnglishWord() || '';
   (document.getElementById('englishWord') as HTMLImageElement).innerHTML = englishWord;
   (document.getElementById('englishWord') as HTMLImageElement).innerHTML = `<a href='https://translate.google.com/?sl=en&tl=de&text=${englishWord}&op=translate' target="_blank">${englishWord}</a>`;
-  // timed('displayCue')
+  // noteTime('displayCue')
 }
 
 failure.addEventListener("click", () => {
@@ -261,21 +294,21 @@ failure.addEventListener("click", () => {
 });
 
 learnedFraction.addEventListener("click", () => {
-  // timed('user fraction choice')
+  // noteTime('user fraction choice')
   const transformedValue = (-learnedFraction.value) / 100
-  // timed('transformedValue')
+  // noteTime('transformedValue')
   // console.log(learnedFraction.value)
   // console.log(transformedValue)
   // console.log(historyValueToEncoding(transformedValue))
   // console.log(learnedFactor(historyValueToEncoding(transformedValue)))
   if (isFailed) {
-    // timed('user failed choice')
+    // noteTime('user failed choice')
     recordFraction(transformedValue)
-    // timed('recordFraction')
+    // noteTime('recordFraction')
     nextCard()
-    // timed('nextCard')
+    // noteTime('nextCard')
     refresh()
-    // timed('refresh')
+    // noteTime('refresh')
   } else {
     displayCue()
   }
@@ -289,6 +322,7 @@ learned.addEventListener("click", () => {
 
 recordEnglishWord.addEventListener("click", () => {
   const englishWord = document.getElementById('userEnglishWord')!.value;
+  if (!englishWord) return;
   setEnglishWord(englishWord)
   document.getElementById('userEnglishWord')!.value = '';
   if (isFailed) {
